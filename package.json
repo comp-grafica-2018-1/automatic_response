@@ -1,0 +1,24 @@
+{
+  "name": "automatic_response",
+  "version": "1.0.0",
+  "description": "Automatic response api for billing. Connected with mongo to store bill data.",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "dependencies": {
+    "express": "*",
+    "body-parser": "*",
+    "mongoose": "*"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/jmbarreram/automatic_response.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/jmbarreram/automatic_response/issues"
+  },
+  "homepage": "https://github.com/jmbarreram/automatic_response#readme"
+}
