@@ -1,0 +1,20 @@
+{
+  "name": "api_rest",
+  "version": "1.0.0",
+  "description": "tutorial de carlos azaustre siguiendo sus videos",
+  "main": "index.js",
+  "scripts": {
+    "start": "nodemon index.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Manuel zambrano",
+  "license": "MIT",
+  "dependencies": {
+    "body-parser": "^1.18.2",
+    "express": "^4.16.3",
+    "nodemailer": "^4.6.4"
+  },
+  "devDependencies": {
+    "nodemon": "^1.17.4"
+  }
+}
