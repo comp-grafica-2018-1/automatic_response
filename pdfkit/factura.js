@@ -2,12 +2,12 @@ const fs = require('fs');
 const PDF = require('pdfkit');
 
 
-const people = [
+const productos = [
     {name : 'ok'}];
 
 let i = 1;
 
-people.forEach((person) => {
+productos.forEach((person) => {
     i++;
     let doc = new PDF();
     doc.pipe(fs.createWriteStream(`pdf-files/factura.pdf`));
@@ -40,11 +40,42 @@ doc.fontSize(15).text(('Comentarios: '+ comentarios),290, 153);//comentarios
 doc.fontSize(12).text(('Codigo'),10, 282);//codigo
 doc.fontSize(12).text(('Articulo'),130, 282);//arituclo
 doc.fontSize(12).text(('Unidaes'),249, 282);//unidades
-doc.fontSize(12).text(('Precio U.'),316, 282);//precio unidad
+doc.fontSize(12).text(('Precio U.'),310, 282);//precio unidad
 doc.fontSize(12).text(('Subtotal'),380, 282);//subtotal
 doc.fontSize(12).text(('Iva'),455, 282);//% iva
 doc.fontSize(12).text(('Total'),505, 282);//Total con iva
 doc.fontSize(12).text(('Forma de pago'),7, 635);//Forma de pago
+doc.fontSize(10).text(('REF12345'),7, 310,{
+    width: 50,
+    align: 'justify',
+});//codigo recibido
+
+doc.fontSize(10).text(('mueble bonito funcional y barato'),60, 310,{
+    width: 175,
+    align: 'right',
+});//articulo recibido
+
+doc.fontSize(10).text(('10'),245, 310,{
+    width: 50,
+    align: 'right',
+});//unidades recibido
+doc.fontSize(10).text(('1.000.000'),302, 310,{
+    width: 65,
+    align: 'right',
+});//precio recibido 
+doc.fontSize(10).text(('1.000.000'),372, 310,{
+    width: 60,
+    align: 'right',
+});//subtotal
+doc.fontSize(10).text(('190.000'),425, 310,{
+    width: 60,
+    align: 'right',
+});//iva recibido
+doc.fontSize(10).text(('1.190.000'),490, 310,{
+    width: 60,
+    align: 'right',
+});//total recibido
+
 doc.rect(5, 50, 275, 50).stroke() ;// logo u nombre
 doc.rect(280,50,275,25).stroke() ;// numero factura
 doc.rect(280,75,275,25).stroke() ;  // direccion empresa
