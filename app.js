@@ -5,7 +5,7 @@ var mongoose = require('mongoose');
 var fs = require('fs');
 
 var data = '';
-var myPathTxt = 'C:/Users/juanc/Documents/CompGrafica/01MuebleBOM.txt';
+var myPathTxt = 'C:/Users/ingenio/Documents/ProyectoComputacion/01Mueble/01MuebleBOM.txt';
 
 Bill = require('./models/bill');
 Price = require('./models/price');
