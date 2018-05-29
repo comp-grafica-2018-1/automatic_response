@@ -1,7 +1,7 @@
 var mongoose = require('mongoose');
 
-// Bill Schema
-var billSchema = mongoose.Schema({
+// Price Schema
+var priceSchema = mongoose.Schema({
 	nombre: {
 		type: String,
 		require: true
@@ -41,25 +41,29 @@ var billSchema = mongoose.Schema({
 		type: String,
 		require: true
 	},
-	fecha_creacion: {
+	create_date: {
 		type: Date,
 		default: Date.now
+	},
+	confirmacion: {
+		type: String,
+		require: true
 	}
 });
 
-var Bill = module.exports = mongoose.model('Bill', billSchema);
+var Price = module.exports = mongoose.model('Price', priceSchema);
 
-// Get Bills
-module.exports.getBills = function(callback, limit){
-	Bill.find(callback).limit(limit);
+// Get Prices
+module.exports.getPrices = function(callback, limit){
+	Price.find(callback).limit(limit);
 }
 
-// Get Bill By Id
-module.exports.getBillById = function(id, callback){
-	Bill.findById(id, callback);
+// Get Price By Id
+module.exports.getPriceById = function(id, callback){
+	Price.findById(id, callback);
 }
 
-// Add Bill
-module.exports.addBill = function(bill, callback){
-	Bill.create(bill, callback);
+// Add Price
+module.exports.addPrice = function(price, callback){
+	Price.create(price, callback);
 }
