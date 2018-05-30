@@ -12,63 +12,58 @@ Price = require('./models/price');
 Item = require('./models/item');
 
 // Connect to Mongoose
-mongoose.connect('mongodb://localhost/bills');
-mongoose.connect('mongodb://localhost/prices');
-mongoose.connect('mongodb://localhost/inventory');
+mongoose.connect('mongodb://localhost:27017/auto_response');
+
 var db = mongoose.connection;
 
 app.use(bodyParser.json());
 
 // Wait for file to exist, checks every 2 seconds
-function getFile(path, timeout, data) {
+function getFile(path, timeout, data, res) {
     var timeout = setInterval(function() {
 
         var file = path;
         var fileExists = fs.existsSync(file);
 
-        console.log('Checking for: ', file);
-        console.log('Exists: ', fileExists);
+        console.log('File exists: ', fileExists);
 
         if (fileExists) {
             clearInterval(timeout);
-            fs.readFile(myPathTxt, 'utf8', function(error, data){
-            	price(data);
+            fs.readFile(myPathTxt, 'utf8', function(err, data){
+            	updateItems(data, res);
             });
         }
     }, timeout);
 };
 
-function price(data){
+function updateItems(data){
 	var words = data.split(/\r?\n/).map(function(val){return val.split(';')});
-	console.log(words);
+	for (var i = words.length - 1; i > 0; i--) {
+		Item.updateItem(words[i][1], words[i][2], {}, function(err, callback){
+			if(err){
+				console.log('Unable to update', err);
+			}
+		});
+	}
 };
 
+function getFileDelay(){
+	getFile(myPathTxt,5000);
+}
+
 app.get('/', function(req, res){
-	res.send('Please use /api/bills or /api/prices');
+	res.send('Please use /api/bills, /api/prices or /api/items');
 });
 
-// Get all bills
-/*
-app.get('/api/bills', function(req, res){
-	Bill.getBills(function(err, bills){
-		if(err){
-			console.log('Unable to get list of bills');
-		}
-		res.json(bills);
-	});
-});
-*/
-// Get bill by id
-/*
-app.get('/api/bills/:_id', function(req, res){
-	Bill.getBillById(req.params._id, function(err, bill){
+app.get('/api/items', function(req, res){
+		Item.getItems(function(err, item){
 		if(err){
 			console.log('Unable to get bill by id');
 		}
-		res.json(bill);
+		res.json(item);
 	});
 });
-*/
+
 // Post bill
 app.post('/api/bills', function(req, res){
 	var bill = req.body;
@@ -76,9 +71,10 @@ app.post('/api/bills', function(req, res){
 		if(err){
 			console.log('Unable to add bill');
 		}
+
 		// Llamar script
-		//wait
-		getFile(myPathTxt,5000);
+
+		setTimeout(getFileDelay, 60000);
 		res.json(bill);
 	});
 });
@@ -90,8 +86,11 @@ app.post('/api/prices', function(req, res){
 		if(err){
 			console.log('Unable to add price');
 		}
+
 		// Llamar script
+
 		// Enviar correo
+
 		res.json(price);
 	});
 });

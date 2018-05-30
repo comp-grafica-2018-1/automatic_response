@@ -23,7 +23,7 @@ var itemSchema = mongoose.Schema({
 var Item = module.exports = mongoose.model('Item', itemSchema);
 
 // Get Item
-module.exports.getItem = function(callback, limit){
+module.exports.getItems = function(callback, limit){
 	Item.find(callback).limit(limit);
 }
 
@@ -32,7 +32,21 @@ module.exports.getItemById = function(id, callback){
 	Item.findById(id, callback);
 }
 
+// Get Item By Name
+
+module.exports.getItemByName = function(name, callback){
+	Item.find({'nombre': name});
+}
+
 // Add Item
 module.exports.addItem = function(item, callback){
 	Item.create(item, callback);
+}
+
+// Update Item bill
+module.exports.updateItem = function(name, quantity, options, callback){
+	var query = {nombre: name};
+	var qty = parseInt(quantity);
+	qty = -qty;
+	Item.update(query, {$inc : {'cantidad' : quantity}}, options, callback);
 }
