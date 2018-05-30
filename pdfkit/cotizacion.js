@@ -1,32 +1,33 @@
 const fs = require('fs');
 const PDF = require('pdfkit');
-
-
-const people = [
-    {name : 'ok'},
-];
-
-let i = 1;
-
-people.forEach((person) => {
-    i++;
+const inport = require('./info.js');
     let doc = new PDF();
     doc.pipe(fs.createWriteStream(`pdf-files/cotizacion.pdf`));
    
 doc.moveDown()
 
-dempresa= (`car `);
-ciudad= (`Bogota `);
-fecha= (`Hoy  `);
-cliente = (`Cliente Nombre`);
-domicilio= (`Car nn #nn L nn`);
-ciudad= (`Medellin`);
-nif= (`12112121`);
-comentarios= (` `);
-codigo= (`25 `);
-articulo= (`110`);
-unidad= (`11`);
-precio= (`15000000`);
+
+nfactura = inport.nfactura;
+dempresa= inport.dempresa;
+ciudad= inport.eciudad;
+fecha= inport.fecha;
+cliente = inport.cliente;
+domicilio= inport.domicilio;
+ciudad= inport.cciudad;
+nif= inport.nif;
+comentarios= inport.comentarios;
+codigo= inport.codigo;
+articulo= inport.articulo;
+unidad= inport.unidad;
+precio= inport.precio;
+subtotal = inport.subtotal;
+ iva = inport.iva;
+ total = inport.total;
+ rsubtotal = inport.rsubtotal;
+ descuento = inport.descuento;
+ base = inport.base;
+ riva = inport.riva;
+ rfactura = inport.rfactura;
 doc.fontSize(20).text((domicilio),290, 77); // direccion empresa empresa
 doc.fontSize(20).text((ciudad),290, 102);// ciudad empresa
 doc.fontSize(15).text((fecha),10, 102);// fecha de la cotizacion
@@ -37,42 +38,43 @@ doc.fontSize(15).text(('N.I.F:       '+ nif),7, 230);//nif cliente
 doc.fontSize(15).text(('Comentarios: '+ comentarios),290, 153);//comentarios
 doc.fontSize(12).text(('Codigo'),10, 282);//codigo
 doc.fontSize(12).text(('Articulo'),130, 282);//arituclo
-doc.fontSize(12).text(('Unidaes'),249, 282);//unidades
-doc.fontSize(12).text(('Precio U.'),316, 282);//precio unidad
+doc.fontSize(12).text(('Unidades'),249, 282);//unidades
+doc.fontSize(12).text(('Precio U.'),310, 282);//precio unidad
 doc.fontSize(12).text(('Subtotal'),380, 282);//subtotal
 doc.fontSize(12).text(('Iva'),455, 282);//% iva
 doc.fontSize(12).text(('Total'),505, 282);//Total con iva
 doc.fontSize(12).text(('Forma de pago'),7, 635);//Forma de pago
-doc.fontSize(10).text(('REF12345'),7, 310,{
+doc.fontSize(10).text((codigo),7, 310,{
     width: 50,
     align: 'justify',
 });//codigo recibido
 
-doc.fontSize(10).text(('mueble bonito funcional y barato'),60, 310,{
+doc.fontSize(10).text((articulo),60, 310,{
     width: 175,
     align: 'right',
 });//articulo recibido
 
-doc.fontSize(10).text(('10'),245, 310,{
+doc.fontSize(10).text((unidad),245, 310,{
     width: 50,
     align: 'right',
 });//unidades recibido
-doc.fontSize(10).text(('1.000.000'),302, 310,{
+doc.fontSize(10).text((precio),302, 310,{
     width: 65,
     align: 'right',
 });//precio recibido 
-doc.fontSize(10).text(('1.000.000'),372, 310,{
+doc.fontSize(10).text((subtotal),372, 310,{
     width: 60,
     align: 'right',
 });//subtotal
-doc.fontSize(10).text(('190.000'),425, 310,{
+doc.fontSize(10).text((iva),425, 310,{
     width: 60,
     align: 'right',
 });//iva recibido
-doc.fontSize(10).text(('1.190.000'),490, 310,{
+doc.fontSize(10).text((total),490, 310,{
     width: 60,
     align: 'right',
 });//total recibido
+
 doc.rect(5, 50, 275, 50).stroke() ;// logo u nombre
 doc.rect(280,50,275,25).stroke() ;// numero cotizacion
 doc.rect(280,75,275,25).stroke() ;  // direccion empresa
@@ -96,31 +98,22 @@ doc.rect(5,580,132,125).stroke() ; //forma pago
 doc.rect(137,580,418,25).fillAndStroke("#f2f3f4", "black").stroke() ; //subtotal  #f2f3f4
 doc.moveUp().fillColor('black');//total cotizacion
 doc.fontSize(12).text(('Subtotal: '),140, 588);//Subtotal recaudo
-doc.fontSize(12).text(('$$0000'),385, 588);//Subtotal recaudo numero
+doc.fontSize(12).text((rsubtotal),385, 588);//Subtotal recaudo numero
 doc.fontSize(12).text(('Descuento'),140, 615);//descuento recaudo
-doc.fontSize(12).text(('$$0000'),495, 615);//descuento recaudo numero
+doc.fontSize(12).text((descuento),495, 615);//descuento recaudo numero
 doc.fontSize(12).text(('Base imponible'),140, 632);//Base imponible
-doc.fontSize(12).text(('$$0000'),495, 632);//base imponible numero
+doc.fontSize(12).text((base),495, 632);//base imponible numero
 doc.moveTo(136, 645) .lineTo(555,645).stroke();//linea descuento y base imponible
 doc.fontSize(12).text(('Iva'),140, 651);//Iva recaudo
-doc.fontSize(12).text(('$$0000'),495, 651);//Iva recaudo numero
+doc.fontSize(12).text((riva),495, 651);//Iva recaudo numero
 doc.rect(138,679,417,25).fill("#cacfd2").moveDown().stroke() ;//relleno caslla total cotizacion
 doc.moveUp().fillColor('#ec7063');//total cotizacion
-doc.fontSize(14).text(('Total cotizacion '),140, 685);// total cotizacion
-doc.fontSize(14).text(('$$0000'),490, 685);//Iva recaudo numero
+doc.fontSize(14).text(('Total cotizacion: '),140, 685);// total cotizacion
+doc.fontSize(14).text(('Total cotizacion: '),140, 685);// total cotizacion
+doc.fontSize(14).text((rfactura),480, 685);//total cotizacion recibido
 doc.fontSize(20).text(('Cotizacion'),290, 52);// numero cotizacion
-grad = doc.linearGradient(50, 0, 150, 100)
-grad.stop(0, 'brown')
-.stop(0.5, 'black')
-.stop(1, 'blue')
-doc.rect (120, 53, 40, 40);
-doc.fill (grad);
-grad = doc.linearGradient(50, 0, 150, 100)
-grad.stop(0, 'blue', 0)
-.stop(0.5, 'red')
-.stop(1, 'green', 1)
-doc.circle (130, 73, 20);
-doc.fill (grad);
+//imagen escala
+doc.image('LogoIngenioFuncional.png', 5, 55, {scale: 0.25})
+
     doc.end();
     console.log(`Okey`);
-});
