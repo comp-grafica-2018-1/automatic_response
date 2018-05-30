@@ -3,6 +3,7 @@ var app = express();
 var bodyParser = require('body-parser');
 var mongoose = require('mongoose');
 var fs = require('fs');
+var spawn = require("child_process").spawn,child;
 
 var data = '';
 var myPathTxt = 'C:/Users/ingenio/Documents/ProyectoComputacion/01Mueble/01MuebleBOM.txt';
@@ -12,58 +13,63 @@ Price = require('./models/price');
 Item = require('./models/item');
 
 // Connect to Mongoose
-mongoose.connect('mongodb://localhost:27017/auto_response');
-
+mongoose.connect('mongodb://localhost/bills');
+mongoose.connect('mongodb://localhost/prices');
+mongoose.connect('mongodb://localhost/inventory');
 var db = mongoose.connection;
 
 app.use(bodyParser.json());
 
 // Wait for file to exist, checks every 2 seconds
-function getFile(path, timeout, data, res) {
+function getFile(path, timeout, data) {
     var timeout = setInterval(function() {
 
         var file = path;
         var fileExists = fs.existsSync(file);
 
-        console.log('File exists: ', fileExists);
+        console.log('Checking for: ', file);
+        console.log('Exists: ', fileExists);
 
         if (fileExists) {
             clearInterval(timeout);
-            fs.readFile(myPathTxt, 'utf8', function(err, data){
-            	updateItems(data, res);
+            fs.readFile(myPathTxt, 'utf8', function(error, data){
+            	price(data);
             });
         }
     }, timeout);
 };
 
-function updateItems(data){
+function price(data){
 	var words = data.split(/\r?\n/).map(function(val){return val.split(';')});
-	for (var i = words.length - 1; i > 0; i--) {
-		Item.updateItem(words[i][1], words[i][2], {}, function(err, callback){
-			if(err){
-				console.log('Unable to update', err);
-			}
-		});
-	}
+	console.log(words);
 };
 
-function getFileDelay(){
-	getFile(myPathTxt,5000);
-}
-
 app.get('/', function(req, res){
-	res.send('Please use /api/bills, /api/prices or /api/items');
+	res.send('Please use /api/bills or /api/prices');
 });
 
-app.get('/api/items', function(req, res){
-		Item.getItems(function(err, item){
+// Get all bills
+/*
+app.get('/api/bills', function(req, res){
+	Bill.getBills(function(err, bills){
+		if(err){
+			console.log('Unable to get list of bills');
+		}
+		res.json(bills);
+	});
+});
+*/
+// Get bill by id
+/*
+app.get('/api/bills/:_id', function(req, res){
+	Bill.getBillById(req.params._id, function(err, bill){
 		if(err){
 			console.log('Unable to get bill by id');
 		}
-		res.json(item);
+		res.json(bill);
 	});
 });
-
+*/
 // Post bill
 app.post('/api/bills', function(req, res){
 	var bill = req.body;
@@ -71,10 +77,9 @@ app.post('/api/bills', function(req, res){
 		if(err){
 			console.log('Unable to add bill');
 		}
-
-		// Llamar script
-
-		setTimeout(getFileDelay, 60000);
+		runScript(bill);//revisar campos de bill
+		//wait
+		getFile(myPathTxt,5000);
 		res.json(bill);
 	});
 });
@@ -86,13 +91,34 @@ app.post('/api/prices', function(req, res){
 		if(err){
 			console.log('Unable to add price');
 		}
-
-		// Llamar script
-
+		runScript(price);//revisar campos de price
 		// Enviar correo
-
 		res.json(price);
 	});
 });
 app.listen(3000);
 console.log('Running on port 3000...');
+
+function runScript(params){
+	switch(params.mueble){
+		case 01:
+			child = spawn("powershell.exe",["C:\\Users\\ingenio\\Documents\\ProyectoComputacion\\01Mueble.ps1 "+params.colchon+" "+params.repisa+" "+params.material+" "params.color]);
+			break;
+		case 02:
+			child = spawn("powershell.exe",["C:\\Users\\ingenio\\Documents\\ProyectoComputacion\\02Mueble.ps1 "+params.alto+" "+params.material+" "params.color]);
+			break;
+		case 04:
+			child = spawn("powershell.exe",["C:\\Users\\ingenio\\Documents\\ProyectoComputacion\\04Mueble.ps1 "+params.colchon+" "+params.material+" "params.color]);
+			break;
+	}	
+	child.stdout.on("data",function(data){
+    console.log("Powershell Data: " + data);
+	});
+	child.stderr.on("data",function(data){
+	    console.log("Powershell Errors: " + data);
+	});
+	child.on("exit",function(){
+	    console.log("Powershell Script finished");
+	});
+	child.stdin.end();
+}
