@@ -3,7 +3,7 @@ var app = express();
 var bodyParser = require('body-parser');
 var mongoose = require('mongoose');
 var fs = require('fs');
-
+var spawn = require("child_process").spawn;
 var data = '';
 var myPathTxt = 'C:/Users/ingenio/Documents/ProyectoComputacion/01Mueble/01MuebleBOM.txt';
 
@@ -96,3 +96,28 @@ app.post('/api/prices', function(req, res){
 });
 app.listen(3000);
 console.log('Running on port 3000...');
+
+function runScript(params){
+	var child;
+	switch(params.mueble){
+		case 01:
+			child = spawn("powershell.exe",["C:\\Users\\ingenio\\Documents\\ProyectoComputacion\\01Mueble.ps1 "+params.colchon+" "+params.repisa+" "+params.material+" "params.color]);
+			break;
+		case 02:
+			child = spawn("powershell.exe",["C:\\Users\\ingenio\\Documents\\ProyectoComputacion\\02Mueble.ps1 "+params.alto+" "+params.material+" "params.color]);
+			break;
+		case 04:
+			child = spawn("powershell.exe",["C:\\Users\\ingenio\\Documents\\ProyectoComputacion\\04Mueble.ps1 "+params.colchon+" "+params.material+" "params.color]);
+			break;
+	}	
+	child.stdout.on("data",function(data){
+    console.log("Powershell Data: " + data);
+	});
+	child.stderr.on("data",function(data){
+	    console.log("Powershell Errors: " + data);
+	});
+	child.on("exit",function(){
+	    console.log("Powershell Script finished");
+	});
+	child.stdin.end();
+}
