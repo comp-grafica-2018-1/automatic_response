@@ -10,7 +10,8 @@
     "body-parser": "*",
     "express": "*",
     "mongoose": "*",
-    "nodemailer": "^4.6.5"
+    "nodemailer": "^4.6.5",
+    "pdfkit": "*"
   },
   "repository": {
     "type": "git",
