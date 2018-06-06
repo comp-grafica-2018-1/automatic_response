@@ -6,7 +6,7 @@ var fs = require('fs');
 var spawn = require("child_process").spawn;
 var data = '';
 var myPathTxt = 'C:/Users/ingenio/Documents/ProyectoComputacion/01Mueble/01MuebleBOM.txt';
-const nodemailer = require('nodemailer')
+const nodemailer = require('nodemailer');
 
 const transporter = nodemailer.createTransport({
 	service: 'gmail',
