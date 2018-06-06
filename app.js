@@ -136,7 +136,7 @@ app.post('/api/bills', function(req, res){
 		setTimeout(getFileDelay(bill), 60000);
 		mailOptions.to = bill.correo;
 		mailOptions.subject = "Confirmación de orden de compra";
-		setTimeout(getFileDelay, 60000);
+		setTimeout(getFileDelay.bind(null, bill), 60000);
 		mailOptions.text = `Cordial saludo, ${bill.nombre}\n Adjuntamos su orden de compra y la visualización de su mueble:\n`
 		transporter.sendMail(mailOptions,(error, info) => {
 		if (error){
@@ -158,7 +158,7 @@ app.post('/api/prices', function(req, res){
 			console.log('Unable to add price');
 		}
 		runScript(price);
-		setTimeout(getFileDelay(price), 60000);
+		setTimeout(getFileDelay.bind(null, price), 60000);
 		// Enviar correo
 		setTimeout(getFileDelay, 60000);
 		mailOptions.to = price.correo;
