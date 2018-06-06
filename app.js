@@ -80,7 +80,7 @@ function getFileDelay(price){
 function pricePdfHelper(price, _data) {
 	var date = new Date().toISOString().replace(/T/, ' ').replace(/\..+/, '');
 	var itemName = "";
-	if price.altura != null){
+	if (price.altura != null){
 		itemName = 'Closet multifuncional';
 	}else{ 
 		if(price.repisa != null){
