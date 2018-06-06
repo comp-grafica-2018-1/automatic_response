@@ -6,6 +6,29 @@ var fs = require('fs');
 var spawn = require("child_process").spawn;
 var data = '';
 var myPathTxt = 'C:/Users/ingenio/Documents/ProyectoComputacion/01Mueble/01MuebleBOM.txt';
+const nodemailer = require('nodemailer')
+
+const transporter = nodemailer.createTransport({
+	service: 'gmail',
+	auth: {
+		user: 'ingeniofuncional@gmail.com',
+		pass: 'ingeniofunc'
+	}
+})
+
+var mailOptions = {
+	from: 'Ingenio funcional',
+	to: 'jmbarreram@unal.edu.co',
+	subject: 'prueba de correo nodeJS',
+	text: 'solo dejo la prueba del envio del correo desde el servicio REST con adjunto :v',
+	attachments: [
+		{
+			//path: 'C:/Users/Mazqhalo/NodeJs/output.pdf'
+			filename: 'prueba.pdf',
+            content: fs.createReadStream('index.js')
+		}
+	]
+}
 
 Bill = require('./models/bill');
 Price = require('./models/price');
@@ -71,8 +94,8 @@ app.post('/api/bills', function(req, res){
 		if(err){
 			console.log('Unable to add bill');
 		}
-
-		// Llamar script
+		console.log(bill);
+		runScript(bill);
 
 		setTimeout(getFileDelay, 60000);
 		res.json(bill);
@@ -82,34 +105,33 @@ app.post('/api/bills', function(req, res){
 // Post price
 app.post('/api/prices', function(req, res){
 	var price = req.body;
+	console.log(price);
 	Price.addPrice(price, function(err, price){
 		if(err){
 			console.log('Unable to add price');
 		}
 
-		// Llamar script
+		runScript(price);
 
 		// Enviar correo
 
 		res.json(price);
 	});
 });
-app.listen(3000);
-console.log('Running on port 3000...');
+app.listen(3002);
+console.log('Running on port 3002...');
 
 function runScript(params){
 	var child;
-	switch(params.mueble){
-		case 01:
-			child = spawn("powershell.exe",["C:\\Users\\ingenio\\Documents\\ProyectoComputacion\\01Mueble.ps1 "+params.colchon+" "+params.repisa+" "+params.material+" "params.color]);
-			break;
-		case 02:
-			child = spawn("powershell.exe",["C:\\Users\\ingenio\\Documents\\ProyectoComputacion\\02Mueble.ps1 "+params.alto+" "+params.material+" "params.color]);
-			break;
-		case 04:
-			child = spawn("powershell.exe",["C:\\Users\\ingenio\\Documents\\ProyectoComputacion\\04Mueble.ps1 "+params.colchon+" "+params.material+" "params.color]);
-			break;
-	}	
+	if (params.altura != null){
+		child = spawn("powershell.exe",["C:\\Users\\ingenio\\Documents\\ProyectoComputacion\\02Mueble.ps1 "+params.altura+" "+params.material+" "+params.color]);
+	}else{ 
+		if(params.repisa != null){
+			child = spawn("powershell.exe",["C:\\Users\\ingenio\\Documents\\ProyectoComputacion\\01Mueble.ps1 "+params.colchon+" "+params.repisa+" "+params.material+" "+params.color]);
+		}else{
+			child = spawn("powershell.exe",["C:\\Users\\ingenio\\Documents\\ProyectoComputacion\\04Mueble.ps1 "+params.colchon+" "+params.material+" "+params.color]);
+		}
+	}
 	child.stdout.on("data",function(data){
     console.log("Powershell Data: " + data);
 	});
