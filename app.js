@@ -80,10 +80,10 @@ function getFileDelay(price){
 function pricePdfHelper(price, _data) {
 	var date = new Date().toISOString().replace(/T/, ' ').replace(/\..+/, '');
 	var itemName = "";
-	if (params.altura != null){
+	if price.altura != null){
 		itemName = 'Closet multifuncional';
 	}else{ 
-		if(params.repisa != null){
+		if(price.repisa != null){
 			itemName = 'Mesa con cama';
 		}else{
 			itemName = 'Escritorio con cama';
@@ -133,7 +133,6 @@ app.post('/api/bills', function(req, res){
 		console.log(bill);
 		runScript(bill);
 
-		setTimeout(getFileDelay(bill), 60000);
 		mailOptions.to = bill.correo;
 		mailOptions.subject = "Confirmación de orden de compra";
 		setTimeout(getFileDelay.bind(null, bill), 60000);
@@ -160,7 +159,6 @@ app.post('/api/prices', function(req, res){
 		runScript(price);
 		setTimeout(getFileDelay.bind(null, price), 60000);
 		// Enviar correo
-		setTimeout(getFileDelay, 60000);
 		mailOptions.to = price.correo;
 		mailOptions.subject = "Confirmación de cotización";
 		mailOptions.text = `Cordial saludo, ${price.nombre}\n Adjuntamos su cotización en pdf y la visualización de su mueble:\n`;

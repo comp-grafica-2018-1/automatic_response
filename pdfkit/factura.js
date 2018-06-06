@@ -5,7 +5,7 @@ const inport = require('./info.js');
 function doPrice(nfactura, dempresa, ciudad, fecha, cliente, domicilio, ciudad, nif, comentarios, codigo, articulo,
     unidad, precio, subtotal, iva, total, rsubtotal, descuento, base, riva, rfactura) {
     let doc = new PDF();
-    doc.pipe(fs.createWriteStream(`pdf-files/factura.pdf`));
+    doc.pipe(fs.createWriteStream('/factura.pdf'));
        
     doc.moveDown()
     doc.fontSize(20).text(('Factura #:      '+ nfactura),290, 52);// numero factura

@@ -5,7 +5,7 @@ const inport = require('./info.js');
 function doPrice(nfactura, dempresa, ciudad, fecha, cliente, domicilio, ciudad, nif, comentarios, codigo, articulo,
     unidad, precio, subtotal, iva, total, rsubtotal, descuento, base, riva, rfactura) {
     let doc = new PDF();
-    doc.pipe(fs.createWriteStream(`pdf-files/cotizacion.pdf`));
+    doc.pipe(fs.createWriteStream('./cotizacion.pdf'));
     doc.moveDown()
 
     doc.fontSize(20).text((domicilio),290, 77); // direccion empresa empresa
