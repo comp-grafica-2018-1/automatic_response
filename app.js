@@ -6,7 +6,7 @@ var fs = require('fs');
 var spawn = require("child_process").spawn;
 var data = '';
 var myPathTxt = 'C:/Users/ingenio/Documents/ProyectoComputacion/01Mueble/01MuebleBOM.txt';
-const nodemailer = require('nodemailer')
+const nodemailer = require('nodemailer');
 
 const transporter = nodemailer.createTransport({
 	service: 'gmail',
@@ -34,6 +34,9 @@ Bill = require('./models/bill');
 Price = require('./models/price');
 Item = require('./models/item');
 
+PricePdf = require('./pdfkit/cotizacion');
+BillPdf = require('./pdfkit/factura');
+
 // Connect to Mongoose
 mongoose.connect('mongodb://localhost:27017/auto_response');
 
@@ -41,8 +44,7 @@ var db = mongoose.connection;
 
 app.use(bodyParser.json());
 
-// Wait for file to exist, checks every 2 seconds
-function getFile(path, timeout, data, res) {
+function getFile(path, timeout, price) {
     var timeout = setInterval(function() {
 
         var file = path;
@@ -52,15 +54,16 @@ function getFile(path, timeout, data, res) {
 
         if (fileExists) {
             clearInterval(timeout);
-            fs.readFile(myPathTxt, 'utf8', function(err, data){
-            	updateItems(data, res);
+            fs.readFile(myPathTxt, 'utf8', function(err, _data){
+            	updateItems(_data);
+            	pricePdfHelper(price, _data);
             });
         }
     }, timeout);
 };
 
-function updateItems(data){
-	var words = data.split(/\r?\n/).map(function(val){return val.split(';')});
+function updateItems(_data){
+	var words = _data.split(/\r?\n/).map(function(val){return val.split(';')});
 	for (var i = words.length - 1; i > 0; i--) {
 		Item.updateItem(words[i][1], words[i][2], {}, function(err, callback){
 			if(err){
@@ -70,8 +73,41 @@ function updateItems(data){
 	}
 };
 
-function getFileDelay(){
-	getFile(myPathTxt,5000);
+function getFileDelay(price){
+	getFile(myPathTxt,5000,price);
+}
+
+function pricePdfHelper(price, _data) {
+	var date = new Date().toISOString().replace(/T/, ' ').replace(/\..+/, '');
+	var itemName = "";
+	if (params.altura != null){
+		itemName = 'Closet multifuncional';
+	}else{ 
+		if(params.repisa != null){
+			itemName = 'Mesa con cama';
+		}else{
+			itemName = 'Escritorio con cama';
+		}
+	}
+
+	getValue(_data, function(err, precio) {
+		PricePdf.doPrice(price.id, 'Dir Empresa', 'Ciudad Empresa', date, price.nombre, 'Dir Domicilio', 'Ciudad', 121212,
+			'*comentarios', 0, itemName, price.cantidad, precio, precio*price.cantidad, precio*price.cantidad*0.16
+			, precio*price.cantidad*1.16, 0, 0, 0, '16', precio*price.cantidad*1.16);
+	});
+}
+
+function getValue(_data, callback) {
+	var precio = 0;
+	var words = _data.split(/\r?\n/).map(function(val){return val.split(';')});
+	for (var i = words.length - 1; i > 0; i--) {
+		Item.getItemByName(words[i][1], function(err, cb){
+			if(err){
+				console.log('Unable to update', err);
+			}
+			precio += cb.precio * parseInt(words[i][2]);
+		});
+	}
 }
 
 app.get('/', function(req, res){
@@ -97,7 +133,7 @@ app.post('/api/bills', function(req, res){
 		console.log(bill);
 		runScript(bill);
 
-		setTimeout(getFileDelay, 60000);
+		setTimeout(getFileDelay(bill), 60000);
 		res.json(bill);
 	});
 });
@@ -112,7 +148,7 @@ app.post('/api/prices', function(req, res){
 		}
 
 		runScript(price);
-
+		setTimeout(getFileDelay(price), 60000);
 		// Enviar correo
 
 		res.json(price);
