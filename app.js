@@ -20,12 +20,12 @@ var mailOptions = {
 	from: 'Ingenio funcional',
 	to: 'jmbarreram@unal.edu.co',
 	subject: 'prueba de correo nodeJS',
-	text: 'solo dejo la prueba del envio del correo desde el servicio REST con adjunto :v',
+	text: 'El documento de soporte de su cotización',
 	attachments: [
 		{
-			//path: 'C:/Users/Mazqhalo/NodeJs/output.pdf'
-			filename: 'prueba.pdf',
-            content: fs.createReadStream('index.js')
+			path: 'C:/Users/ingenio/Documents/ProyectoComputacion/02Mueble/02Mueble.pdf'
+			//filename: 'prueba.pdf',
+            //content: fs.createReadStream('index.js')
 		}
 	]
 }
@@ -134,6 +134,17 @@ app.post('/api/bills', function(req, res){
 		runScript(bill);
 
 		setTimeout(getFileDelay(bill), 60000);
+		mailOptions.to = bill.correo;
+		mailOptions.subject = "Confirmación de orden de compra";
+		setTimeout(getFileDelay, 60000);
+		mailOptions.text = `Cordial saludo, ${bill.nombre}\n Adjuntamos su orden de compra y la visualización de su mueble:\n`
+		transporter.sendMail(mailOptions,(error, info) => {
+		if (error){
+			console.log(error);
+		}else {
+			console.log('Email sent: ' + info.response);
+		}
+	})
 		res.json(bill);
 	});
 });
@@ -146,10 +157,20 @@ app.post('/api/prices', function(req, res){
 		if(err){
 			console.log('Unable to add price');
 		}
-
 		runScript(price);
 		setTimeout(getFileDelay(price), 60000);
 		// Enviar correo
+		setTimeout(getFileDelay, 60000);
+		mailOptions.to = price.correo;
+		mailOptions.subject = "Confirmación de cotización";
+		mailOptions.text = `Cordial saludo, ${price.nombre}\n Adjuntamos su cotización en pdf y la visualización de su mueble:\n`;
+		transporter.sendMail(mailOptions,(error, info) => {
+		if (error){
+			console.log(error);
+		}else {
+			console.log('Email sent: ' + info.response);
+		}
+	})
 
 		res.json(price);
 	});
@@ -161,11 +182,14 @@ function runScript(params){
 	var child;
 	if (params.altura != null){
 		child = spawn("powershell.exe",["C:\\Users\\ingenio\\Documents\\ProyectoComputacion\\02Mueble.ps1 "+params.altura+" "+params.material+" "+params.color]);
+		mailOptions.attachments.path = 'C:/Users/ingenio/Documents/ProyectoComputacion/02Mueble/02Mueble.jpg';
 	}else{ 
 		if(params.repisa != null){
 			child = spawn("powershell.exe",["C:\\Users\\ingenio\\Documents\\ProyectoComputacion\\01Mueble.ps1 "+params.colchon+" "+params.repisa+" "+params.material+" "+params.color]);
+			mailOptions.attachments.path = 'C:/Users/ingenio/Documents/ProyectoComputacion/01Mueble/01Mueble.jpg';
 		}else{
 			child = spawn("powershell.exe",["C:\\Users\\ingenio\\Documents\\ProyectoComputacion\\04Mueble.ps1 "+params.colchon+" "+params.material+" "+params.color]);
+			mailOptions.attachments.path = 'C:/Users/ingenio/Documents/ProyectoComputacion/04Mueble/04Mueble.jpg';
 		}
 	}
 	child.stdout.on("data",function(data){
