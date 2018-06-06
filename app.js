@@ -74,10 +74,13 @@ function updateItems(_data){
 };
 
 function getFileDelay(price){
+	console.log('getFileDelay start');
 	getFile(myPathTxt,5000,price);
+	console.log('getFileDelay end');
 }
 
 function pricePdfHelper(price, _data) {
+	console.log('pricePdfHelper start');
 	var date = new Date().toISOString().replace(/T/, ' ').replace(/\..+/, '');
 	var itemName = "";
 	if (price.altura != null){
@@ -90,14 +93,26 @@ function pricePdfHelper(price, _data) {
 		}
 	}
 
-	getValue(_data, function(err, precio) {
+	getValue(_data, function(precio) {
+		console.log(price.id);
+		console.log(date);
+		console.log(price.nombre);
+		console.log(itemName);
+		console.log(price.cantidad);
+		console.log(precio);
+		console.log(precio*price.cantidad);
+		console.log(precio*price.cantidad*0.16);
+		console.log(precio*price.cantidad*1.16);
+		console.log(precio*price.cantidad*1.16);
 		PricePdf.doPrice(price.id, 'Dir Empresa', 'Ciudad Empresa', date, price.nombre, 'Dir Domicilio', 'Ciudad', 121212,
 			'*comentarios', 0, itemName, price.cantidad, precio, precio*price.cantidad, precio*price.cantidad*0.16
 			, precio*price.cantidad*1.16, 0, 0, 0, '16', precio*price.cantidad*1.16);
 	});
+	console.log('pricePdfHelper end');
 }
 
 function getValue(_data, callback) {
+	console.log('get Value start');
 	var precio = 0;
 	var words = _data.split(/\r?\n/).map(function(val){return val.split(';')});
 	for (var i = words.length - 1; i > 0; i--) {
@@ -108,6 +123,8 @@ function getValue(_data, callback) {
 			precio += cb.precio * parseInt(words[i][2]);
 		});
 	}
+	console.log('get Value end');
+	callback(precio);
 }
 
 app.get('/', function(req, res){
