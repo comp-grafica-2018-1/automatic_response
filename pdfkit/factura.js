@@ -2,7 +2,8 @@ const fs = require('fs');
 const PDF = require('pdfkit');
 const inport = require('./info.js');
 
-function doPrice(nfactura, dempresa, ciudad, fecha, cliente, domicilio, ciudad, nif, comentarios, codigo, articulo,
+module.exports = function(){ 
+    this.doPrice(nfactura, dempresa, ciudad, fecha, cliente, domicilio, ciudad, nif, comentarios, codigo, articulo,
     unidad, precio, subtotal, iva, total, rsubtotal, descuento, base, riva, rfactura) {
     let doc = new PDF();
     doc.pipe(fs.createWriteStream('/factura.pdf'));
@@ -97,4 +98,5 @@ function doPrice(nfactura, dempresa, ciudad, fecha, cliente, domicilio, ciudad, 
 
         doc.end();
     constole.log(`Okey`);
+    }
 }
