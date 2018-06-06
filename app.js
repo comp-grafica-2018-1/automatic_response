@@ -99,7 +99,7 @@ app.post('/api/bills', function(req, res){
 		mailOptions.to = bill.correo;
 		mailOptions.subject = "Confirmación de orden de compra";
 		setTimeout(getFileDelay, 60000);
-		mailOptions.text = `Cordial saludo, ${price.nombre}\n Adjuntamos su orden de compra y la visualización de su mueble:\n`
+		mailOptions.text = `Cordial saludo, ${bill.nombre}\n Adjuntamos su orden de compra y la visualización de su mueble:\n`
 		transporter.sendMail(mailOptions,(error, info) => {
 		if (error){
 			console.log(error);
@@ -142,14 +142,14 @@ function runScript(params){
 	var child;
 	if (params.altura != null){
 		child = spawn("powershell.exe",["C:\\Users\\ingenio\\Documents\\ProyectoComputacion\\02Mueble.ps1 "+params.altura+" "+params.material+" "+params.color]);
-		mailOptions.attachments.path = 'C:/Users/ingenio/Documents/ProyectoComputacion/02Mueble/02Mueble.pdf';
+		mailOptions.attachments.path = 'C:/Users/ingenio/Documents/ProyectoComputacion/02Mueble/02Mueble.jpg';
 	}else{ 
 		if(params.repisa != null){
 			child = spawn("powershell.exe",["C:\\Users\\ingenio\\Documents\\ProyectoComputacion\\01Mueble.ps1 "+params.colchon+" "+params.repisa+" "+params.material+" "+params.color]);
-			mailOptions.attachments.path = 'C:/Users/ingenio/Documents/ProyectoComputacion/01Mueble/01Mueble.pdf';
+			mailOptions.attachments.path = 'C:/Users/ingenio/Documents/ProyectoComputacion/01Mueble/01Mueble.jpg';
 		}else{
 			child = spawn("powershell.exe",["C:\\Users\\ingenio\\Documents\\ProyectoComputacion\\04Mueble.ps1 "+params.colchon+" "+params.material+" "+params.color]);
-			mailOptions.attachments.path = 'C:/Users/ingenio/Documents/ProyectoComputacion/04Mueble/04Mueble.pdf';
+			mailOptions.attachments.path = 'C:/Users/ingenio/Documents/ProyectoComputacion/04Mueble/04Mueble.jpg';
 		}
 	}
 	child.stdout.on("data",function(data){
